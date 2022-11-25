@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import 'quill/dist/quill.snow.css';
 import Quill from 'quill';
 import io from 'socket.io-client';
+import { useParams } from 'react-router-dom';
 
 
 
@@ -19,8 +20,9 @@ const TOOLBAR_OPTIONS = [
 
 export default function TextEditor() {
 
+  const params = useParams();
   const [socket, setSocket] = useState()
-const [quill, setQuill] = useState()
+  const [quill, setQuill] = useState()
 
   useEffect(() => {
     //Sets socket state
@@ -32,6 +34,16 @@ const [quill, setQuill] = useState()
       s.disconnect()
     }
   }, [])
+
+ useEffect(() => {
+   console.log(params)
+ 
+   return () => {
+     
+   }
+ }, [])
+ 
+
 
 
   useEffect(() => {
@@ -46,13 +58,13 @@ const [quill, setQuill] = useState()
 
     //add event handler
     quill.on('text-change', handler)
-    
+
 
     return () => {
-    // removes event handler
-    quill.off('text-change', handler)
+      // removes event handler
+      quill.off('text-change', handler)
     }
-  },[socket, quill])
+  }, [socket, quill])
 
 
 
@@ -61,8 +73,8 @@ const [quill, setQuill] = useState()
     if (quill == null || socket == null) return
 
     const handler = (delta) => {
-    quill.updateContents(delta)
-    console.log(delta)
+      quill.updateContents(delta)
+      console.log(delta)
     }
 
     //add event handler
@@ -70,10 +82,10 @@ const [quill, setQuill] = useState()
     console.log('recieve changes')
 
     return () => {
-    // removes event handler
-    socket.off('recieve-changes', handler)
+      // removes event handler
+      socket.off('recieve-changes', handler)
     }
-  },[socket, quill])
+  }, [socket, quill])
 
 
 
