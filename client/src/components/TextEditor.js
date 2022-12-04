@@ -20,7 +20,7 @@ const TOOLBAR_OPTIONS = [
 
 export default function TextEditor() {
 
-  const params = useParams();
+  const {id: documentId} = useParams();
   const [socket, setSocket] = useState()
   const [quill, setQuill] = useState()
 
@@ -36,12 +36,19 @@ export default function TextEditor() {
   }, [])
 
  useEffect(() => {
-   console.log(params)
- 
+  if (quill == null || socket == null) return
+
+  socket.once('load-document', document => {
+    quill.setContents(document)
+    quill.enable()
+  })
+  
+  socket.emit('get-document', documentId)
+
    return () => {
      
    }
- }, [])
+ }, [socket, quill, documentId])
  
 
 
@@ -105,6 +112,8 @@ export default function TextEditor() {
       theme: "snow"
     });
     // sets state to the instance of Quill
+    q.disable()
+    q.setText("Loading...")
     setQuill(q)
   }, [])
 
